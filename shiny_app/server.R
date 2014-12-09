@@ -21,8 +21,8 @@ filter_dates <- function(homeTeam, awayTeam){
 
 price_table <- function(homeTeam, awayTeam, gameDate){
   nba2 <- subset(nba, Home_Team == homeTeam & Away_Team.x == awayTeam & Date == gameDate)
-  price_table <- data.frame(nba2$section_lmh, nba2$overall_avg_price, nba2$opening_price, nba2$closing_price, nba2$total_return)
-  names(price_table) <- c('Section', 'Average Price', 'Opening Price', 'Closing Price', 'Return')
+  price_table <- data.frame(nba2$section_lmh, nba2$overall_avg_price, nba2$closing_price, nba2$total_return)
+  names(price_table) <- c('Section', 'Average Price', 'Closing Price', 'Return')
   return(price_table)
 }
 
@@ -44,14 +44,7 @@ star_article_table <- function(homeTeam, awayTeam, gameDate){
 
 schedule_table <- function(homeTeam, awayTeam, gameDate){
   nba2 <- subset(nba, Home_Team == homeTeam & Away_Team.x == awayTeam & Date == gameDate)
-  schedule_table <- data.frame(nba2$National_TV, nba2$Holiday.Weekend, nba2$Afternoon)
-  schedule_table$ntv <- 'No'
-  schedule_table$ntv[schedule_table$National_TV == 1] <- 'Yes'
-  schedule_table$hwg <- 'No'
-  schedule_table$hwg[schedule_table$Holiday.Weekend == 1] <- 'Yes'
-  schedule_table$aft <- 'No'
-  schedule_table$aft[schedule_table$Afternoon == 1] <- 'Yes'
-  schedule_table <- schedule_table[c(4, 5, 6)]
+  schedule_table <- data.frame(nba$National_TV, nba$Holiday.Weekend, nba$Afternoon)
   names(schedule_table) <- c('National TV', 'Holiday or Weekend Game', 'Afternoon Game')
   schedule_table <- schedule_table[1,]
   return(schedule_table)
@@ -266,3 +259,12 @@ shinyServer(function(input, output) {
   
 }
 )
+
+
+#schedule_table$ntv[schedule_table$National_TV == 0] <- 'No'
+#schedule_table$ntv[schedule_table$National_TV == 1] <- 'Yes'
+#schedule_table$hwg[schedule_table$Holiday.Weekend == 0] <- 'No'
+#schedule_table$hwg[schedule_table$Holiday.Weekend == 1] <- 'Yes'
+#schedule_table$aft[schedule_table$Afternoon == 0] <- 'No'
+#schedule_table$aft[schedule_table$Afternoon == 1] <- 'Yes'
+#schedule_table <- schedule_table[c(4, 5, 6)]
