@@ -23,6 +23,8 @@ mysql_db = "stubhub"
 ticket_table = "available_tickets_new"
 
 ### Functions ###
+
+# Returns single DB Connect object to be used multiple times
 def getDBConnect():
     return myDB.connect(host=mysql_host,
                                 user=mysql_user,
@@ -118,7 +120,7 @@ def runTicketQuery(event_id):
     
     return pd.DataFrame(ticketDict)
 
-# For each event, pull available ticket info ###
+# For each event, pull available ticket info and save each dataframe to DB
 def ticketIterate(eventDF, dbCon):
     for i in range(0,len(eventDF)-1):
         try:    
@@ -133,15 +135,17 @@ def ticketIterate(eventDF, dbCon):
 
 #print eventQueryUrl
 
+# Query 
 eventQueryUrl = constructEventQueryUrl()
 eventResponse = urllib2.urlopen(eventQueryUrl)
 eventSoup = BeautifulSoup(eventResponse)
 
+# Set up arrays to hold event fields
 eventIds = []
 eventDates = []
 eventDescriptions = []
 
-
+# Populate each event field array
 eventDocs = eventSoup.findAll('doc')
 for doc in eventDocs:
     eventId = str(doc.find('str', {'name':'event_id'}).text)
@@ -151,6 +155,7 @@ for doc in eventDocs:
     eventDate = str(doc.find('date', {'name':'event_date'}).text)[:63]
     eventDates.append(eventDate)
     
+# Construct dictionary of events
 eventDict = {
     'event_id': eventIds,
     'date': eventDates,
@@ -173,4 +178,5 @@ dbCon = getDBConnect()
 # Save eventsDF to DB
 #saveToDB(eventDF, 'events', dbCon, replace=True)
 
+# Scrape and save ticket data for each event
 ticketIterate(eventDF, dbCon)
